@@ -1,5 +1,6 @@
 package service;
 
 public interface WriterService {
-    void write();
+    void write(String content);
+
 }
