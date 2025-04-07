@@ -12,19 +12,17 @@ public class ReaderServiceImpl implements ReaderService {
         this.path = path;
     }
 
-
     @Override
     public String read() {
         StringBuilder text = new StringBuilder();
         try (BufferedReader bis = new BufferedReader(new FileReader(path))) {
             int c;
-            while((c = bis.read()) != -1) {
+            while ((c = bis.read()) != -1) {
                 text.append((char) c);
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-
         return text.toString();
     }
 }
