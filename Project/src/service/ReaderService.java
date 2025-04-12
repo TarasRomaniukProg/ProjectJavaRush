@@ -1,5 +1,8 @@
 package service;
 
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
+
 public interface ReaderService {
-     String read();
+     String read(Path path) throws FileNotFoundException;
 }
