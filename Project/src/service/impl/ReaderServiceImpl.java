@@ -20,7 +20,7 @@ public class ReaderServiceImpl implements ReaderService {
                 text.append((char) c);
             }
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            System.out.println("Exception: " + ex.getMessage());
         }
         return text.toString();
     }

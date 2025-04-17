@@ -17,7 +17,7 @@ public class WriterServiceImpl implements WriterService {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path.toFile()))) {
             bw.write(content);
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            System.out.println("Exception: " + ex.getMessage());
         }
     }
 }
