@@ -1,6 +1,6 @@
-package service.impl;
+package service.io.impl;
 
-import service.WriterService;
+import service.io.WriterService;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;

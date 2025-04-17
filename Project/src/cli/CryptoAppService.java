@@ -1,9 +1,10 @@
 package cli;
 
-import service.ReaderService;
-import service.WriterService;
-import service.impl.ReaderServiceImpl;
-import service.impl.WriterServiceImpl;
+
+import service.io.ReaderService;
+import service.io.WriterService;
+import service.io.impl.ReaderServiceImpl;
+import service.io.impl.WriterServiceImpl;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;

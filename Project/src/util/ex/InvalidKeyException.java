@@ -2,6 +2,6 @@ package util.ex;
 
 public class InvalidKeyException extends RuntimeException {
     public InvalidKeyException() {
-        super("Key is invalid!");
+        super("Key should be grater than 0!");
     }
 }

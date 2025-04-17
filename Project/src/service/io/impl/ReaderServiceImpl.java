@@ -1,6 +1,6 @@
-package service.impl;
+package service.io.impl;
 
-import service.ReaderService;
+import service.io.ReaderService;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
