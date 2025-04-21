@@ -11,14 +11,15 @@ import service.io.WriterService;
 import service.io.impl.ReaderServiceImpl;
 import service.io.impl.WriterServiceImpl;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
 public class CryptoAppService {
     private final ReaderService rs = new ReaderServiceImpl();
     private final WriterService ws = new WriterServiceImpl();
 
-    private final EncryptService encrypt = new EncryptServiceImpl(rs, ws);
-    private final DecryptService decrypt = new DecryptServiceImpl(rs, ws);
+    private final EncryptService encrypt = new EncryptServiceImpl(rs);
+    private final DecryptService decrypt = new DecryptServiceImpl(rs);
 
     public void run(String[] args) {
 
@@ -26,23 +27,29 @@ public class CryptoAppService {
         StringBuilder path = new StringBuilder(args[1]);
         int key = Integer.parseInt(args[2]);
 
-        switch (et) {
-            case ENCRYPT -> {
-                Path readPath = Path.of(path.toString());
-                Path writePath = Path.of(path.insert(path.indexOf("."), "[ENCRYPTED]").toString());
+        try {
+            switch (et) {
+                case ENCRYPT -> {
+                    Path readPath = Path.of(path.toString());
+                    Path writePath = Path.of(path.insert(path.indexOf("."), "[ENCRYPTED]").toString());
 
-                encrypt.encrypt(key, readPath, writePath);
-            }
-
-            case DECRYPT -> {
-                Path readPath = Path.of(path.toString());
-                if (path.toString().contains("[ENCRYPTED]")) {
-                    path.delete(path.indexOf("["), path.indexOf("]") + 1);
+                    String encrypted = encrypt.encrypt(key, readPath);
+                    ws.write(encrypted, writePath);
                 }
-                Path writePath = Path.of(path.insert(path.indexOf("."), "[DECRYPTED]").toString());
 
-                decrypt.decrypt(key, readPath, writePath);
+                case DECRYPT -> {
+                    Path readPath = Path.of(path.toString());
+                    if (path.toString().contains("[ENCRYPTED]")) {
+                        path.delete(path.indexOf("["), path.indexOf("]") + 1);
+                    }
+                    Path writePath = Path.of(path.insert(path.indexOf("."), "[DECRYPTED]").toString());
+
+                    String decrypted = decrypt.decrypt(key, readPath);
+                    ws.write(decrypted, writePath);
+                }
             }
+        } catch (FileNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
         }
     }
 }

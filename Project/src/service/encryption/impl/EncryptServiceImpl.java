@@ -2,7 +2,6 @@ package service.encryption.impl;
 
 import service.encryption.EncryptService;
 import service.io.ReaderService;
-import service.io.WriterService;
 import util.ex.InvalidKeyException;
 
 import java.io.FileNotFoundException;
@@ -10,19 +9,17 @@ import java.nio.file.Path;
 
 public class EncryptServiceImpl implements EncryptService {
     private final ReaderService readerService;
-    private final WriterService writerService;
 
-    public EncryptServiceImpl(ReaderService readerService, WriterService writerService) {
+    public EncryptServiceImpl(ReaderService readerService) {
         this.readerService = readerService;
-        this.writerService = writerService;
     }
 
     @Override
-    public void encrypt(int key, Path readPath, Path writePath) {
+    public String encrypt(int key, Path readPath) {
         if (key <= 0) throw new InvalidKeyException();
+        StringBuilder encryptedText = new StringBuilder();
         try {
             String text = readerService.read(readPath);
-            StringBuilder encryptedText = new StringBuilder();
             for (int i = 0; i < text.length(); i++) {
                 char c = text.charAt(i);
                 if (Character.isUpperCase(c)) {
@@ -39,9 +36,9 @@ public class EncryptServiceImpl implements EncryptService {
                     encryptedText.append(c);
                 }
             }
-            writerService.write(encryptedText.toString(), writePath);
-        } catch(FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             System.out.println("Exception: " + ex.getMessage());
         }
+        return encryptedText.toString();
     }
 }
