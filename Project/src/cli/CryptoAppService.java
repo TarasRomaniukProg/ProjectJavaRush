@@ -2,8 +2,10 @@ package cli;
 
 
 import model.EncryptionType;
+import service.encryption.BruteforceService;
 import service.encryption.DecryptService;
 import service.encryption.EncryptService;
+import service.encryption.impl.BruteforceServiceImpl;
 import service.encryption.impl.DecryptServiceImpl;
 import service.encryption.impl.EncryptServiceImpl;
 import service.io.ReaderService;
@@ -20,17 +22,24 @@ public class CryptoAppService {
 
     private final EncryptService encrypt = new EncryptServiceImpl(rs);
     private final DecryptService decrypt = new DecryptServiceImpl(rs);
+    private final BruteforceService bruteforce = new BruteforceServiceImpl(rs, decrypt);
 
     public void run(String[] args) {
 
         EncryptionType et = EncryptionType.valueOf(args[0]);
         StringBuilder path = new StringBuilder(args[1]);
-        int key = Integer.parseInt(args[2]);
+        Path encryptedPath = Path.of("");
+        int key = 0;
+        if (et.equals(EncryptionType.ENCRYPT) || et.equals(EncryptionType.DECRYPT)) {
+            key = Integer.parseInt(args[2]);
+        } else {
+           encryptedPath = Path.of(args[2]);
+        }
 
+        Path readPath = Path.of(path.toString());
         try {
             switch (et) {
                 case ENCRYPT -> {
-                    Path readPath = Path.of(path.toString());
                     Path writePath = Path.of(path.insert(path.indexOf("."), "[ENCRYPTED]").toString());
 
                     String encrypted = encrypt.encrypt(key, readPath);
@@ -38,7 +47,6 @@ public class CryptoAppService {
                 }
 
                 case DECRYPT -> {
-                    Path readPath = Path.of(path.toString());
                     if (path.toString().contains("[ENCRYPTED]")) {
                         path.delete(path.indexOf("["), path.indexOf("]") + 1);
                     }
@@ -46,6 +54,12 @@ public class CryptoAppService {
 
                     String decrypted = decrypt.decrypt(key, readPath);
                     ws.write(decrypted, writePath);
+                }
+                
+                case BRUTE_FORCE -> {
+                    int decryptedKey = bruteforce.bruteForce(readPath, encryptedPath);
+                    Path writePath = Path.of(path.insert(path.indexOf("."), "(B-" + decryptedKey + ")").toString());
+                    ws.write(rs.read(readPath), writePath);
                 }
             }
         } catch (FileNotFoundException ex) {
